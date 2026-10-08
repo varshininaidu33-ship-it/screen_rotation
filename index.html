@@ -1,0 +1,776 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Screen Rotation as Orthogonal Transformation | B.Tech Mathematics Mini-Project</title>
+  <meta name="description" content="Interactive B.Tech 1st Year Mathematics Mini-Project demonstrating 2D screen rotation as an orthogonal linear transformation with determinant +1 and distance preservation.">
+  
+  <!-- Google Fonts & KaTeX for pristine math rendering -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;500;600&family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.8/dist/katex.min.css">
+  <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.8/dist/katex.min.js"></script>
+  <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.8/dist/contrib/auto-render.min.js" onload="renderMathInElement(document.body, {delimiters: [{left: '$$', right: '$$', display: true}, {left: '$', right: '$', display: false}]});"></script>
+
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+  <!-- Background decorative glows -->
+  <div class="ambient-glow glow-1"></div>
+  <div class="ambient-glow glow-2"></div>
+  <div class="ambient-glow glow-3"></div>
+
+  <!-- App Header -->
+  <header class="app-header">
+    <div class="header-container">
+      <div class="brand-group">
+        <div class="brand-badge">B.Tech 1st Year • Engineering Mathematics</div>
+        <h1 class="project-title">Screen Rotation as Orthogonal Transformation</h1>
+        <p class="project-subtitle">Interactive Linear Algebra Lab • Proof of $Q^TQ = I$, $\det(Q) = 1$, and Distance Preservation</p>
+      </div>
+      
+      <!-- Navigation Tabs -->
+      <nav class="nav-tabs" id="navTabs">
+        <button class="nav-tab active" data-tab="lab">🧪 Interactive Lab</button>
+        <button class="nav-tab" data-tab="theory">📐 Mathematical Theory</button>
+        <button class="nav-tab" data-tab="worked">📝 Worked Example</button>
+        <button class="nav-tab" data-tab="viva">🎓 Viva & Expo (24 Q&A)</button>
+        <button class="nav-tab" data-tab="pitch">🎙️ Stage Pitch</button>
+        <button class="nav-tab" data-tab="colab">💻 Google Colab</button>
+      </nav>
+    </div>
+  </header>
+
+  <!-- Problem Statement Banner -->
+  <section class="problem-banner">
+    <div class="banner-inner">
+      <div class="banner-icon">📱</div>
+      <div class="banner-text">
+        <strong>Problem Statement:</strong>
+        <span>“Phone screen rotation can be represented as an orthogonal transformation. Rotation matrices have determinant $\pm 1$ and preserve distances, angles, shape, and size.”</span>
+      </div>
+      <div class="banner-tag">SO(2) Group</div>
+    </div>
+  </section>
+
+  <!-- Main Content Areas -->
+  <main class="main-container">
+
+    <!-- ======================================================== -->
+    <!-- TAB 1: INTERACTIVE LAB & SIMULATION                      -->
+    <!-- ======================================================== -->
+    <section class="tab-pane active" id="pane-lab">
+      
+      <!-- Top Control Bar -->
+      <div class="dashboard-grid">
+
+        <!-- Left Column: Controls & Mathematical Cards -->
+        <div class="dashboard-col controls-col">
+          
+          <!-- Input Controls Card -->
+          <div class="glass-card controls-card">
+            <div class="card-header">
+              <div class="card-title">
+                <span class="icon">🎛️</span> Transformation Controls
+              </div>
+              <button class="btn-ghost" id="btnResetAll" title="Reset to Worked Example">Reset (2, 3, 90°)</button>
+            </div>
+
+            <!-- Coordinate Inputs -->
+            <div class="control-row">
+              <div class="input-field">
+                <div class="field-header">
+                  <label for="sliderX">X Coordinate ($x$)</label>
+                  <span class="field-val" id="valX">2.0</span>
+                </div>
+                <input type="range" id="sliderX" min="-10" max="10" step="0.5" value="2.0">
+                <div class="range-bounds"><span>-10</span><span>0</span><span>+10</span></div>
+              </div>
+
+              <div class="input-field">
+                <div class="field-header">
+                  <label for="sliderY">Y Coordinate ($y$)</label>
+                  <span class="field-val" id="valY">3.0</span>
+                </div>
+                <input type="range" id="sliderY" min="-10" max="10" step="0.5" value="3.0">
+                <div class="range-bounds"><span>-10</span><span>0</span><span>+10</span></div>
+              </div>
+            </div>
+
+            <!-- Rotation Angle Slider -->
+            <div class="control-group angle-group">
+              <div class="field-header">
+                <label for="sliderAngle">Rotation Angle ($\theta$)</label>
+                <div class="angle-badges">
+                  <span class="field-val highlight" id="valAngleDeg">90°</span>
+                  <span class="field-val dim" id="valAngleRad">1.571 rad</span>
+                </div>
+              </div>
+              <input type="range" id="sliderAngle" min="0" max="360" step="1" value="90">
+              <div class="range-bounds"><span>0° (Portrait)</span><span>180°</span><span>360°</span></div>
+            </div>
+
+            <!-- Quick Presets -->
+            <div class="presets-section">
+              <span class="presets-label">⚡ Screen Presets:</span>
+              <div class="preset-buttons">
+                <button class="btn-preset" data-deg="0">0° (Portrait)</button>
+                <button class="btn-preset active" data-deg="90">90° (Landscape L)</button>
+                <button class="btn-preset" data-deg="180">180° (Inverted)</button>
+                <button class="btn-preset" data-deg="270">270° (Landscape R)</button>
+                <button class="btn-preset" data-deg="360">360° (Full)</button>
+              </div>
+            </div>
+          </div>
+
+          <!-- Mathematical Metrics Cards -->
+          <div class="metrics-grid">
+            
+            <!-- Card 1: Coordinates -->
+            <div class="glass-card metric-card">
+              <div class="metric-label">POINT TRANSFORMATION</div>
+              <div class="metric-body">
+                <div class="coord-item">
+                  <span class="coord-tag orig-tag">Initial P</span>
+                  <span class="coord-value" id="cardOrigP">(2.00, 3.00)</span>
+                </div>
+                <div class="coord-arrow">↓ $P' = Q(\theta)P$</div>
+                <div class="coord-item">
+                  <span class="coord-tag rot-tag">Rotated P'</span>
+                  <span class="coord-value highlight" id="cardRotP">(-3.00, 2.00)</span>
+                </div>
+              </div>
+            </div>
+
+            <!-- Card 2: Rotation Matrix -->
+            <div class="glass-card metric-card">
+              <div class="metric-label">ROTATION MATRIX $Q(\theta)$</div>
+              <div class="matrix-display" id="cardMatrixQ">
+                <div class="matrix-brackets">
+                  <div class="matrix-row">
+                    <span id="m00">0.00</span>
+                    <span id="m01">-1.00</span>
+                  </div>
+                  <div class="matrix-row">
+                    <span id="m10">1.00</span>
+                    <span id="m11">0.00</span>
+                  </div>
+                </div>
+              </div>
+              <div class="metric-sub" id="cardMatrixFormula">
+                $\cos(90°) = 0, \; \sin(90°) = 1$
+              </div>
+            </div>
+
+            <!-- Card 3: Orthogonality Verification -->
+            <div class="glass-card metric-card proof-card">
+              <div class="metric-label">ORTHOGONALITY PROOF ($Q^T Q$)</div>
+              <div class="matrix-display" id="cardMatrixQTQ">
+                <div class="matrix-brackets">
+                  <div class="matrix-row">
+                    <span class="valid" id="qtq00">1.00</span>
+                    <span class="valid" id="qtq01">0.00</span>
+                  </div>
+                  <div class="matrix-row">
+                    <span class="valid" id="qtq10">0.00</span>
+                    <span class="valid" id="qtq11">1.00</span>
+                  </div>
+                </div>
+              </div>
+              <div class="badge-status badge-success" id="badgeOrtho">
+                ✓ $Q^T Q = I_2$ (Orthogonal)
+              </div>
+            </div>
+
+            <!-- Card 4: Determinant & Distance -->
+            <div class="glass-card metric-card">
+              <div class="metric-label">INVARIANTS (DETERMINANT & DISTANCE)</div>
+              <div class="metric-stats">
+                <div class="stat-line">
+                  <span>Determinant:</span>
+                  <strong class="highlight" id="cardDet">$\det(Q) = 1.000$</strong>
+                </div>
+                <div class="stat-line">
+                  <span>Original Norm $\|P\|$:</span>
+                  <span id="cardNormP">3.6056 units</span>
+                </div>
+                <div class="stat-line">
+                  <span>Rotated Norm $\|P'\|$:</span>
+                  <span id="cardNormProt">3.6056 units</span>
+                </div>
+                <div class="stat-line">
+                  <span>Difference $\Delta d$:</span>
+                  <span class="valid" id="cardDiff">0.000000 (Preserved)</span>
+                </div>
+              </div>
+              <div class="badge-status badge-success" id="badgeDist">
+                ✓ $\|Qv\| = \|v\|$ (Distance Invariant)
+              </div>
+            </div>
+
+          </div>
+
+          <!-- Theoretical Proof Result Bar -->
+          <div class="glass-card result-summary-card">
+            <div class="summary-icon">🎯</div>
+            <div class="summary-content">
+              <strong>Mathematical Verification Result:</strong>
+              <p id="summaryText">
+                For $\theta = 90^\circ$, $Q^T Q = I$ and $\det(Q) = 1$. The transformation is <strong>strictly orthogonal</strong>.
+                Euclidean distance from origin is invariant ($\|P\| = \|P'\| = 3.6056$). Angles, geometric shapes, and pixel aspect ratios are perfectly preserved!
+              </p>
+            </div>
+          </div>
+
+        </div>
+
+        <!-- Right Column: Visualizations -->
+        <div class="dashboard-col visual-col">
+          
+          <!-- Visual 1: 2D Cartesian Coordinate Graph -->
+          <div class="glass-card visual-card">
+            <div class="card-header">
+              <div class="card-title">
+                <span class="icon">📈</span> 2D Cartesian Coordinate Graph
+              </div>
+              <div class="graph-legend">
+                <span class="legend-item"><span class="legend-dot dot-orig"></span> Original $P$</span>
+                <span class="legend-item"><span class="legend-dot dot-rot"></span> Rotated $P'$</span>
+                <span class="legend-item"><span class="legend-line dot-circ"></span> Trajectory Circle</span>
+              </div>
+            </div>
+
+            <div class="canvas-wrapper">
+              <canvas id="coordCanvas" width="600" height="500"></canvas>
+            </div>
+
+            <div class="visual-footer">
+              <span class="footer-tip">💡 Notice how $P$ rotates along the dotted circle of constant radius $r = \|P\|$.</span>
+            </div>
+          </div>
+
+          <!-- Visual 2: Smartphone Screen Simulation -->
+          <div class="glass-card visual-card">
+            <div class="card-header">
+              <div class="card-title">
+                <span class="icon">📱</span> Smartphone Screen Rotation Simulation
+              </div>
+              <div class="screen-mode-badge" id="screenOrientationTag">
+                Landscape Mode (90°)
+              </div>
+            </div>
+
+            <div class="phone-stage">
+              <!-- Ghost Reference (Portrait 0°) -->
+              <div class="phone-ghost">
+                <span class="ghost-label">Portrait Reference (0°)</span>
+              </div>
+
+              <!-- Interactive Phone Chassis -->
+              <div class="phone-chassis" id="phoneChassis">
+                <div class="phone-screen">
+                  <div class="phone-notch"></div>
+                  <div class="screen-content">
+                    <div class="screen-grid"></div>
+                    <div class="screen-ui-header">
+                      <span class="ui-time">09:41</span>
+                      <span class="ui-status">●●● 5G</span>
+                    </div>
+                    <div class="screen-center-artwork">
+                      <div class="artwork-shape">
+                        <span class="shape-icon">📐</span>
+                        <div class="pixel-target" id="screenPixelTarget">
+                          <span class="pixel-dot"></span>
+                          <span class="pixel-label" id="screenPixelLabel">P'(-3.0, 2.0)</span>
+                        </div>
+                      </div>
+                      <span class="screen-caption">Display Buffer Rigid Rotation</span>
+                    </div>
+                    <div class="screen-home-bar"></div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div class="visual-footer">
+              <span class="footer-tip">📱 Smartphone GPU applies $P' = Q(\theta)P$ to the entire framebuffer so images and video never distort.</span>
+            </div>
+          </div>
+
+        </div>
+
+      </div>
+
+    </section>
+
+    <!-- ======================================================== -->
+    <!-- TAB 2: MATHEMATICAL THEORY & DERIVATIONS                 -->
+    <!-- ======================================================== -->
+    <section class="tab-pane" id="pane-theory">
+      <div class="theory-wrapper">
+        
+        <div class="theory-header">
+          <h2>📐 Mathematical Foundations & Rigorous Derivations</h2>
+          <p>Comprehensive B.Tech 1st-Year Linear Algebra Proofs for Screen Rotation</p>
+        </div>
+
+        <div class="theory-cards-grid">
+          
+          <!-- Section 6: Transformation -->
+          <div class="glass-card theory-card">
+            <div class="card-tag">Concept 1</div>
+            <h3>1. What is a Transformation?</h3>
+            <p>A transformation is a mathematical mapping from one vector space to another (or back to itself):</p>
+            <div class="math-box">
+              $$T: \mathbb{R}^2 \to \mathbb{R}^2, \quad P \mapsto P' = T(P)$$
+            </div>
+            <p><strong>Simple English Explanation:</strong> It is a formal algebraic rule that takes every point on a coordinate grid and assigns it a new position.</p>
+          </div>
+
+          <!-- Section 7: Rotation -->
+          <div class="glass-card theory-card">
+            <div class="card-tag">Concept 2</div>
+            <h3>2. What is Rotation?</h3>
+            <p>Rotation is a linear transformation in which every point on the 2D plane revolves through a fixed angle $\theta$ around a fixed pivot point called the center of rotation (origin $(0,0)$).</p>
+            <div class="math-box">
+              $$R_\theta(x, y) = (x\cos\theta - y\sin\theta, \; x\sin\theta + y\cos\theta)$$
+            </div>
+            <p><strong>Simple English Explanation:</strong> Turning an object around a central pivot without sliding (translation) or resizing (scaling) it.</p>
+          </div>
+
+          <!-- Section 8: Orthogonal Transformation -->
+          <div class="glass-card theory-card">
+            <div class="card-tag">Concept 3</div>
+            <h3>3. What is an Orthogonal Matrix?</h3>
+            <p>A square matrix $Q \in \mathbb{R}^{n \times n}$ is orthogonal if its transpose equals its inverse:</p>
+            <div class="math-box">
+              $$Q^T Q = Q Q^T = I_n \iff Q^{-1} = Q^T$$
+            </div>
+            <p><strong>Simple English Explanation:</strong> An orthogonal matrix represents a rigid transformation. Its column vectors are orthonormal (mutually perpendicular and of unit length). Multiplying by an orthogonal matrix rotates or reflects space without stretching it.</p>
+          </div>
+
+          <!-- Section 9 & 10: Derivation of Rotation Matrix -->
+          <div class="glass-card theory-card wide-card">
+            <div class="card-tag">Derivation 1</div>
+            <h3>4. Derivation of the Standard 2D Rotation Matrix</h3>
+            <p>Let an arbitrary point $P(x, y)$ be located at distance $r$ from the origin, making an initial polar angle $\alpha$ with the positive $X$-axis:</p>
+            <div class="math-box">
+              $$x = r \cos\alpha, \quad y = r \sin\alpha$$
+            </div>
+            <p>When the point is rotated counterclockwise through an angle $\theta$, its radial distance $r$ remains unchanged, but its new angle becomes $(\alpha + \theta)$. The new coordinates $(x', y')$ are:</p>
+            <div class="math-box">
+              $$x' = r \cos(\alpha + \theta) = r(\cos\alpha \cos\theta - \sin\alpha \sin\theta)$$
+              $$y' = r \sin(\alpha + \theta) = r(\sin\alpha \cos\theta + \cos\alpha \sin\theta)$$
+            </div>
+            <p>Substituting $r \cos\alpha = x$ and $r \sin\alpha = y$ into the equations:</p>
+            <div class="math-box">
+              $$x' = x\cos\theta - y\sin\theta$$
+              $$y' = x\sin\theta + y\cos\theta$$
+            </div>
+            <p>Expressing this system of linear equations in matrix-vector form:</p>
+            <div class="math-box highlight-box">
+              $$\begin{bmatrix} x' \\ y' \end{bmatrix} = \begin{bmatrix} \cos\theta & -\sin\theta \\ \sin\theta & \cos\theta \end{bmatrix} \begin{bmatrix} x \\ y \end{bmatrix} \implies P' = Q(\theta)P$$
+            </div>
+          </div>
+
+          <!-- Proof: Orthogonality Q^T Q = I -->
+          <div class="glass-card theory-card wide-card">
+            <div class="card-tag">Proof 2</div>
+            <h3>5. Mathematical Proof of Orthogonality ($Q^T Q = I$)</h3>
+            <p>Given the 2D rotation matrix $Q(\theta)$, its transpose $Q^T$ is obtained by swapping rows and columns:</p>
+            <div class="math-box">
+              $$Q = \begin{bmatrix} \cos\theta & -\sin\theta \\ \sin\theta & \cos\theta \end{bmatrix}, \quad Q^T = \begin{bmatrix} \cos\theta & \sin\theta \\ -\sin\theta & \cos\theta \end{bmatrix}$$
+            </div>
+            <p>Multiplying $Q^T$ by $Q$ using row-column matrix multiplication:</p>
+            <div class="math-box">
+              $$Q^T Q = \begin{bmatrix} \cos\theta & \sin\theta \\ -\sin\theta & \cos\theta \end{bmatrix} \begin{bmatrix} \cos\theta & -\sin\theta \\ \sin\theta & \cos\theta \end{bmatrix}$$
+            </div>
+            <div class="math-box highlight-box">
+              $$Q^T Q = \begin{bmatrix} (\cos^2\theta + \sin^2\theta) & (-\cos\theta\sin\theta + \sin\theta\cos\theta) \\ (-\sin\theta\cos\theta + \cos\theta\sin\theta) & (\sin^2\theta + \cos^2\theta) \end{bmatrix} = \begin{bmatrix} 1 & 0 \\ 0 & 1 \end{bmatrix} = I_2$$
+            </div>
+            <p><strong>Conclusion:</strong> Since $Q^T Q = I$, the matrix is strictly orthogonal for all angles $\theta \in \mathbb{R}$.</p>
+          </div>
+
+          <!-- Proof: Determinant -->
+          <div class="glass-card theory-card">
+            <div class="card-tag">Proof 3</div>
+            <h3>6. Proof of Determinant ($\det(Q) = 1$)</h3>
+            <p>Computing the determinant of $Q(\theta) = \begin{bmatrix} a & b \\ c & d \end{bmatrix}$ via $ad - bc$:</p>
+            <div class="math-box">
+              $$\det(Q) = (\cos\theta)(\cos\theta) - (-\sin\theta)(\sin\theta)$$
+              $$\det(Q) = \cos^2\theta - (-\sin^2\theta) = \cos^2\theta + \sin^2\theta = 1$$
+            </div>
+            <p><strong>Simple English Explanation:</strong> A determinant of $+1$ means the transformation preserves orientation (no mirror reflection/flip) and does not scale area.</p>
+          </div>
+
+          <!-- Proof: Distance Preservation -->
+          <div class="glass-card theory-card">
+            <div class="card-tag">Proof 4</div>
+            <h3>7. Proof of Distance Preservation ($\|Qv\| = \|v\|$)</h3>
+            <p>Let $v = \begin{bmatrix} x \\ y \end{bmatrix}$. The square of the Euclidean norm is $\|v\|^2 = v^T v$. For the transformed vector $v' = Qv$:</p>
+            <div class="math-box">
+              $$\|Qv\|^2 = (Qv)^T (Qv) = v^T (Q^T Q) v$$
+              $$\text{Since } Q^T Q = I: \quad \|Qv\|^2 = v^T I v = v^T v = \|v\|^2$$
+              $$\implies \|Qv\| = \|v\|$$
+            </div>
+            <p><strong>Simple English Explanation:</strong> The length of the vector before rotation is identical to the length after rotation.</p>
+          </div>
+
+        </div>
+
+        <!-- Special Cases Matrix Reference Table -->
+        <div class="glass-card table-card">
+          <h3>📊 Special Cases Reference Table</h3>
+          <div class="table-responsive">
+            <table class="styled-table">
+              <thead>
+                <tr>
+                  <th>Angle ($\theta$)</th>
+                  <th>$\cos\theta$</th>
+                  <th>$\sin\theta$</th>
+                  <th>Matrix $Q(\theta)$</th>
+                  <th>Transformation Formula</th>
+                  <th>Smartphone Orientation</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td><strong>0°</strong></td>
+                  <td>1</td>
+                  <td>0</td>
+                  <td>$\begin{bmatrix} 1 & 0 \\ 0 & 1 \end{bmatrix}$</td>
+                  <td>$(x, y) \to (x, y)$</td>
+                  <td>Standard Portrait (Default)</td>
+                </tr>
+                <tr>
+                  <td><strong>90°</strong></td>
+                  <td>0</td>
+                  <td>1</td>
+                  <td>$\begin{bmatrix} 0 & -1 \\ 1 & 0 \end{bmatrix}$</td>
+                  <td>$(x, y) \to (-y, x)$</td>
+                  <td>Landscape Left Orientation</td>
+                </tr>
+                <tr>
+                  <td><strong>180°</strong></td>
+                  <td>-1</td>
+                  <td>0</td>
+                  <td>$\begin{bmatrix} -1 & 0 \\ 0 & -1 \end{bmatrix}$</td>
+                  <td>$(x, y) \to (-x, -y)$</td>
+                  <td>Inverted Portrait Orientation</td>
+                </tr>
+                <tr>
+                  <td><strong>270°</strong></td>
+                  <td>0</td>
+                  <td>-1</td>
+                  <td>$\begin{bmatrix} 0 & 1 \\ -1 & 0 \end{bmatrix}$</td>
+                  <td>$(x, y) \to (y, -x)$</td>
+                  <td>Landscape Right Orientation</td>
+                </tr>
+                <tr>
+                  <td><strong>360°</strong></td>
+                  <td>1</td>
+                  <td>0</td>
+                  <td>$\begin{bmatrix} 1 & 0 \\ 0 & 1 \end{bmatrix}$</td>
+                  <td>$(x, y) \to (x, y)$</td>
+                  <td>Full Rotation Return</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+      </div>
+    </section>
+
+    <!-- ======================================================== -->
+    <!-- TAB 3: WORKED EXAMPLE WALKTHROUGH                        -->
+    <!-- ======================================================== -->
+    <section class="tab-pane" id="pane-worked">
+      <div class="worked-wrapper">
+        
+        <div class="theory-header">
+          <h2>📝 Step-by-Step Textbook Worked Example</h2>
+          <p>Complete derivation and verification for Point $P = (2, 3)$ and Angle $\theta = 90^\circ$</p>
+        </div>
+
+        <div class="worked-steps-list">
+          
+          <div class="glass-card step-card">
+            <div class="step-badge">Step 1</div>
+            <h3>Formulate the 2D Rotation Matrix</h3>
+            <p>For an angle of rotation $\theta = 90^\circ$:</p>
+            <div class="math-box">
+              $$\cos(90^\circ) = 0, \quad \sin(90^\circ) = 1$$
+              $$Q(90^\circ) = \begin{bmatrix} \cos(90^\circ) & -\sin(90^\circ) \\ \sin(90^\circ) & \cos(90^\circ) \end{bmatrix} = \begin{bmatrix} 0 & -1 \\ 1 & 0 \end{bmatrix}$$
+            </div>
+          </div>
+
+          <div class="glass-card step-card">
+            <div class="step-badge">Step 2</div>
+            <h3>Calculate Transformed Coordinates $P'$</h3>
+            <p>Given $P = \begin{bmatrix} 2 \\ 3 \end{bmatrix}$, apply matrix multiplication $P' = Q(90^\circ)P$:</p>
+            <div class="math-box">
+              $$P' = \begin{bmatrix} 0 & -1 \\ 1 & 0 \end{bmatrix} \begin{bmatrix} 2 \\ 3 \end{bmatrix} = \begin{bmatrix} (0 \cdot 2) + (-1 \cdot 3) \\ (1 \cdot 2) + (0 \cdot 3) \end{bmatrix} = \begin{bmatrix} 0 - 3 \\ 2 + 0 \end{bmatrix} = \begin{bmatrix} -3 \\ 2 \end{bmatrix}$$
+            </div>
+            <p><strong>Result:</strong> $P'(x', y') = (-3, 2)$. This matches the general formula for 90°: $(x, y) \to (-y, x)$.</p>
+          </div>
+
+          <div class="glass-card step-card">
+            <div class="step-badge">Step 3</div>
+            <h3>Verify Orthogonality ($Q^T Q = I$)</h3>
+            <p>Find the transpose $Q^T$ by swapping rows and columns:</p>
+            <div class="math-box">
+              $$Q^T = \begin{bmatrix} 0 & 1 \\ -1 & 0 \end{bmatrix}$$
+              $$Q^T Q = \begin{bmatrix} 0 & 1 \\ -1 & 0 \end{bmatrix} \begin{bmatrix} 0 & -1 \\ 1 & 0 \end{bmatrix} = \begin{bmatrix} (0)(0) + (1)(1) & (0)(-1) + (1)(0) \\ (-1)(0) + (0)(1) & (-1)(-1) + (0)(0) \end{bmatrix} = \begin{bmatrix} 1 & 0 \\ 0 & 1 \end{bmatrix} = I_2$$
+            </div>
+            <p><strong>Status:</strong> Orthogonality condition verified!</p>
+          </div>
+
+          <div class="glass-card step-card">
+            <div class="step-badge">Step 4</div>
+            <h3>Evaluate Determinant ($\det(Q)$)</h3>
+            <div class="math-box">
+              $$\det(Q) = (0)(0) - (-1)(1) = 0 - (-1) = 1$$
+            </div>
+            <p><strong>Status:</strong> Determinant is $+1$, confirming pure rotation with orientation preservation.</p>
+          </div>
+
+          <div class="glass-card step-card">
+            <div class="step-badge">Step 5</div>
+            <h3>Compare Euclidean Distance (Norm Invariance)</h3>
+            <p>Calculate the Euclidean distance from origin before and after transformation:</p>
+            <div class="math-box">
+              $$\text{Original Distance } \|P\| = \sqrt{2^2 + 3^2} = \sqrt{4 + 9} = \sqrt{13} \approx 3.6056 \text{ units}$$
+              $$\text{Rotated Distance } \|P'\| = \sqrt{(-3)^2 + 2^2} = \sqrt{9 + 4} = \sqrt{13} \approx 3.6056 \text{ units}$$
+              $$\text{Difference } \Delta d = 3.6056 - 3.6056 = 0.0000 \text{ units}$$
+            </div>
+            <p><strong>Final Verdict:</strong> The transformation is strictly orthogonal, and distance is perfectly preserved!</p>
+          </div>
+
+        </div>
+
+      </div>
+    </section>
+
+    <!-- ======================================================== -->
+    <!-- TAB 4: VIVA QUESTIONS & ANSWERS (24 Q&A)                 -->
+    <!-- ======================================================== -->
+    <section class="tab-pane" id="pane-viva">
+      <div class="viva-wrapper">
+        
+        <div class="theory-header">
+          <h2>🎓 Viva Voce & Expo Examination Guide</h2>
+          <p>All 24 Questions and Concise Answers for Mentors, External Examiners, and Project Expos</p>
+        </div>
+
+        <!-- Viva Search & Filter -->
+        <div class="viva-filter-bar">
+          <input type="text" id="vivaSearch" placeholder="🔍 Search questions (e.g. determinant, 90°, orthogonal)...">
+          <div class="viva-categories">
+            <button class="viva-cat-btn active" data-cat="all">All (24)</button>
+            <button class="viva-cat-btn" data-cat="basics">Project & Basics</button>
+            <button class="viva-cat-btn" data-cat="math">Linear Algebra & Proofs</button>
+            <button class="viva-cat-btn" data-cat="angles">Angles & Special Cases</button>
+            <button class="viva-cat-btn" data-cat="app">Applications & Tech</button>
+          </div>
+        </div>
+
+        <!-- Accordion Q&A Container -->
+        <div class="viva-accordion" id="vivaList">
+          <!-- Dynamically populated via app.js -->
+        </div>
+
+      </div>
+    </section>
+
+    <!-- ======================================================== -->
+    <!-- TAB 5: STAGE PRESENTATION PITCH                          -->
+    <!-- ======================================================== -->
+    <section class="tab-pane" id="pane-pitch">
+      <div class="pitch-wrapper">
+        
+        <div class="theory-header">
+          <h2>🎙️ Stage Presentation & Expo Pitch Cards</h2>
+          <p>Rehearsal-ready scripts with timing markers for faculty evaluation</p>
+        </div>
+
+        <div class="pitch-cards-grid">
+          
+          <!-- 1-Minute Pitch Card -->
+          <div class="glass-card pitch-card">
+            <div class="pitch-header">
+              <span class="pitch-badge">⏱️ 1-Minute Pitch</span>
+              <span class="pitch-context">For Mentor Walk-in / Main Presentation</span>
+            </div>
+            <div class="pitch-body">
+              <blockquote>
+                “Good morning respected evaluators. When you rotate your phone to watch a video, how does the screen turn smoothly without distorting, stretching, or shrinking your apps? Our project, <strong>‘Screen Rotation as Orthogonal Transformation’</strong>, demonstrates the exact linear algebra behind this.<br><br>
+                Smartphone screen rotation is governed by the 2D rotation matrix:
+                $$Q(\theta) = \begin{bmatrix} \cos\theta & -\sin\theta \\ \sin\theta & \cos\theta \end{bmatrix}$$
+                We prove that $Q$ is an <strong>orthogonal matrix</strong> because $Q^T Q = I$ and $\det(Q) = 1$.<br><br>
+                As demonstrated on our interactive dashboard, when we rotate a point like $(2, 3)$ by $90^\circ$, it maps precisely to $(-3, 2)$ via $P' = QP$. Crucially, the distance $\sqrt{13} \approx 3.61$ units remains completely unchanged ($\|Qv\| = \|v\|$).<br><br>
+                This proves that orthogonal transformations preserve distance, angles, shape, and size—forming the mathematical foundation of smartphone operating systems, computer graphics, and robotics.”
+              </blockquote>
+            </div>
+            <div class="pitch-footer">
+              <button class="btn-copy" onclick="copyText('pitch-1min')">📋 Copy 1-Min Script</button>
+              <span class="word-count">~150 words • ~60 seconds delivery</span>
+            </div>
+          </div>
+
+          <!-- 30-Second Elevator Pitch Card -->
+          <div class="glass-card pitch-card">
+            <div class="pitch-header">
+              <span class="pitch-badge">⚡ 30-Second Elevator Pitch</span>
+              <span class="pitch-context">Quick Executive Summary</span>
+            </div>
+            <div class="pitch-body">
+              <blockquote>
+                “Our project proves that smartphone screen rotation is a practical application of <strong>orthogonal transformations</strong> in linear algebra. Using the 2D rotation matrix $Q(\theta)$, we demonstrate that $Q^T Q = I$ and $\det(Q) = 1$.<br><br>
+                This mathematical property guarantees that Euclidean distances and angles are strictly preserved ($\|Qv\| = \|v\|$), ensuring that screen icons, videos, and UI elements rotate without distortion or loss of shape.”
+              </blockquote>
+            </div>
+            <div class="pitch-footer">
+              <button class="btn-copy" onclick="copyText('pitch-30sec')">📋 Copy 30-Sec Script</button>
+              <span class="word-count">~70 words • ~30 seconds delivery</span>
+            </div>
+          </div>
+
+        </div>
+
+      </div>
+    </section>
+
+    <!-- ======================================================== -->
+    <!-- TAB 6: GOOGLE COLAB NOTEBOOK CENTER                      -->
+    <!-- ======================================================== -->
+    <section class="tab-pane" id="pane-colab">
+      <div class="colab-wrapper">
+        
+        <div class="theory-header">
+          <h2>💻 Google Colab Mobile Execution Center</h2>
+          <p>Copy-paste ready code cells optimized for running directly on Android/iOS Google Colab</p>
+        </div>
+
+        <div class="colab-steps-grid">
+          
+          <div class="glass-card colab-instruction-card">
+            <h3>📱 How to run on your phone in 3 steps:</h3>
+            <ol>
+              <li>Open <code>colab.research.google.com</code> in your mobile browser.</li>
+              <li>Tap <strong>+ New Notebook</strong>.</li>
+              <li>Copy and paste each cell below into separate Colab code blocks, then tap <strong>Play (▶)</strong>!</li>
+            </ol>
+            <div class="file-download-notice">
+              <span>Saved in workspace: <strong>Screen_Rotation_Orthogonal_Transformation.ipynb</strong></span>
+            </div>
+          </div>
+
+          <!-- Code Cell 1 -->
+          <div class="glass-card code-cell-card">
+            <div class="code-header">
+              <span>Cell 1: Environment Setup & Imports</span>
+              <button class="btn-copy" onclick="copyCode('code-cell-1')">Copy Cell 1</button>
+            </div>
+            <pre><code id="code-cell-1">import numpy as np
+import matplotlib.pyplot as plt
+import matplotlib.patches as patches
+from matplotlib.patches import Arc
+import ipywidgets as widgets
+from IPython.display import display, HTML, clear_output
+
+plt.rcParams['figure.dpi'] = 110
+plt.rcParams['font.family'] = 'sans-serif'
+print("✅ Setup complete! NumPy, Matplotlib, and ipywidgets are ready.")</code></pre>
+          </div>
+
+          <!-- Code Cell 2 -->
+          <div class="glass-card code-cell-card">
+            <div class="code-header">
+              <span>Cell 2: Mathematical Backend Engine</span>
+              <button class="btn-copy" onclick="copyCode('code-cell-2')">Copy Cell 2</button>
+            </div>
+            <pre><code id="code-cell-2">def rotation_matrix(theta_deg):
+    rad = np.radians(theta_deg)
+    cos_t = np.cos(rad)
+    sin_t = np.sin(rad)
+    cos_t = 0.0 if np.isclose(cos_t, 0.0, atol=1e-12) else cos_t
+    sin_t = 0.0 if np.isclose(sin_t, 0.0, atol=1e-12) else sin_t
+    return np.array([[cos_t, -sin_t], [sin_t, cos_t]], dtype=float)
+
+def rotate_point(x, y, theta_deg):
+    P = np.array([x, y], dtype=float)
+    Q = rotation_matrix(theta_deg)
+    return np.round(Q @ P, 4)
+
+def calculate_determinant(Q):
+    return float(np.round(np.linalg.det(Q), 4))
+
+def verify_orthogonality(Q):
+    QTQ = Q.T @ Q
+    is_ortho = np.allclose(QTQ, np.eye(2), atol=1e-5)
+    return is_ortho, np.round(Q.T, 4), np.round(QTQ, 4)
+
+def calculate_distance(point):
+    return float(np.round(np.linalg.norm(point), 4))
+
+def compare_distances(p_orig, p_rot):
+    d_orig = calculate_distance(p_orig)
+    d_rot = calculate_distance(p_rot)
+    diff = abs(d_rot - d_orig)
+    return d_orig, d_rot, float(np.round(diff, 6)), np.isclose(diff, 0.0, atol=1e-5)
+
+print("✅ Mathematical backend engine loaded successfully.")</code></pre>
+          </div>
+
+          <!-- Code Cell 3 -->
+          <div class="glass-card code-cell-card">
+            <div class="code-header">
+              <span>Cell 3: Worked Example Verification</span>
+              <button class="btn-copy" onclick="copyCode('code-cell-3')">Copy Cell 3</button>
+            </div>
+            <pre><code id="code-cell-3">P_test = (2.0, 3.0)
+theta_test = 90.0
+
+Q_ex = rotation_matrix(theta_test)
+P_prime_ex = rotate_point(P_test[0], P_test[1], theta_test)
+det_ex = calculate_determinant(Q_ex)
+is_ortho_ex, Q_T_ex, QTQ_ex = verify_orthogonality(Q_ex)
+d_orig_ex, d_rot_ex, diff_ex, dist_pres_ex = compare_distances(P_test, P_prime_ex)
+
+print(f"Original Point P: {P_test} | Rotated P': ({P_prime_ex[0]}, {P_prime_ex[1]})")
+print(f"Matrix Q(90°):\n{Q_ex}")
+print(f"Q^T * Q == I: {is_ortho_ex} | det(Q): {det_ex}")
+print(f"Original Dist: {d_orig_ex} | Rotated Dist: {d_rot_ex} | Diff: {diff_ex}")
+print(f"Result: The transformation is orthogonal. Distance is preserved.")</code></pre>
+          </div>
+
+        </div>
+
+      </div>
+    </section>
+
+  </main>
+
+  <!-- Footer -->
+  <footer class="app-footer">
+    <div class="footer-container">
+      <div class="footer-info">
+        <strong>B.Tech 1st Year Engineering Mathematics Mini-Project</strong>
+        <span>Screen Rotation as Orthogonal Transformation • Linear Algebra & Analytical Geometry</span>
+      </div>
+      <div class="footer-tags">
+        <span class="badge">NumPy</span>
+        <span class="badge">Matplotlib</span>
+        <span class="badge">Vanilla CSS</span>
+        <span class="badge">SO(2) Group</span>
+      </div>
+    </div>
+  </footer>
+
+  <script src="app.js"></script>
+</body>
+</html>
